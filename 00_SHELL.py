@@ -19,8 +19,8 @@ blocked = False
 print('# ---- LOGISTICS MANAGER | STARTING ---- #')
 print('To start, use new_game() to create a new game or load_game() to load a previous save')
 
-if platform.system() == 'Linux':
-    print('WARNING! You are using Linux, if you see \'attrib not found\' errors, please do not panic, those are normal.')
+# if platform.system() == 'Linux':
+#     print('WARNING! You are using Linux, if you see \'attrib not found\' errors, please do not panic, those are normal.')
 
 class Save:
     """
@@ -45,9 +45,10 @@ class Save:
         # Creating a new save
         if load == 'no':
             
-            if sqlnew(name=name) == 89:
+            if sqlnew(name=name) == 84:
                 print("Error, please try again (Changing the save name is recommended)")
-                return new_game()
+                new_game()
+                return
 
             self.name = name
 
@@ -75,7 +76,7 @@ class Save:
             # file.close()
         
         # Loading an existing save
-        else:
+        elif load == 'yes':
             
             self.name = name
 
@@ -177,20 +178,28 @@ class Gameplay(Save):
         if f or self.dev_l == 0:
             building = int(input(f'You have {self.build_num} buildings. Which one do you want to choose? (enter the number):\n'))
             if (building == 0) or (building > self.build_num): print('Invalid!');self.choose_building_stor(qty,True)
+            
             if self.storage[building-1] < int(50*(self.level*0.75)):
-                if self.storage[building-1]+qty <= int(50*(self.level*0.75)): print(f'Successfully stored {qty} units in building {building}!\nCapacity: {self.storage[building-1]+qty}/{int(50*(self.level*0.75))}.');self.storage[building-1]+=qty
+                if self.storage[building-1]+qty <= int(50*(self.level*0.75)):
+                    print(f'Successfully stored {qty} units in building {building}!\nCapacity: {self.storage[building-1]+qty}/{int(50*(self.level*0.75))}.')
+                    self.storage[building-1]+=qty
+                
                 elif self.storage[building-1]+qty > int(50*(self.level*0.75)) and self.build_num > 1:
                     print(f'Not enough space, filled building {building}, choose another one to complete.')
                     lft_qty = qty-(int(50*(self.level*0.75))-self.storage[building-1])
                     self.storage[building-1] = int(50*(self.level*0.75))
                     self.choose_building_stor(lft_qty,True,True)
+                
                 elif self.storage[building-1]+qty > int(50*(self.level*0.75)) and self.build_num == 1:
                     print(f'There is not enough space in your building, produce some goods to sell in order to retrieve storage!\n')
                     return 'Error'
+                
                 else: print('Error, please try again'); return 'Error'
+            
             elif sum(self.storage)-(int(50*(self.level*0.75))*len(self.storage)) == 0:
                 print(f'There is not enough space in your buildings, produce some goods to sell in order to retrieve storage!\n')
                 return 'Error'
+            
             elif self.storage[building-1] == int(50*(self.level*0.75)):
                 print('Not enough room in this building!'); self.choose_building_stor(qty,True)
 
@@ -361,11 +370,21 @@ class Gameplay(Save):
 
             '''Production storage'''
             if isinstance(building, int):
-                self.prod_stor+=qty
+                self.prod_stor[building] += qty
                 print(f'Stored {qty} product.s in building {building}.')
             elif isinstance(building,list):
-                for i in range(len(building)):
-                    self.prod_stor+=qty//len(building)
+                if qty<len(building):
+                    buildings_used = []
+                    for i in range(len(building)):
+                        self.prod_stor[building[i]] += 1
+                        left_qty -= 1
+                        buildings_used.append(building[i])
+                    print(f'Stored {qty} product.s in buildings {buildings_used}.')
+                else:
+                    self.prod_stor[building[0]] += qty % len(building)
+                    left_qty = qty - (qty % len(building))
+                    for i in range(len(building)):
+                        self.prod_stor[building[i]] += left_qty//len(building)        
                     print(f'Stored {qty} product.s in buildings {building}.')
                 
 
@@ -468,8 +487,8 @@ class Gameplay(Save):
                 price = qty*15000
                 if price > self.money: print('Not enough money!'); return 'Error'
                 else:
-                    print(f'Do you really want to purchase {qty} van.s for {price}Cr? This action is irreversible.')
-                    confirm = input('(y/n): ')
+                    print(f'You are about to purchase {qty} van.s for {price}Cr? This action is irreversible.')
+                    confirm = confirm()
                     if confirm == 'y': print(f'Purchased {qty} van.s !'); self.money-=price; self.van_num+=qty
                     else: print('Purchase aborted!'); return 'Abort'
             
@@ -477,8 +496,8 @@ class Gameplay(Save):
                 price = qty*150000
                 if price > self.money: print('Not enough money!'); return 'Error'
                 else:
-                    print(f'Do you really want to purchase {qty} truck.s for {price}Cr? This action is irreversible.')
-                    confirm = input('(y/n): ')
+                    print(f'You are about to purchase {qty} truck.s for {price}Cr? This action is irreversible.')
+                    confirm = confirm()
                     if confirm == 'y': print(f'Purchased {qty} truck.s !'); self.money-=price; self.truck_num+=qty
                     else: print('Purchase aborted!'); return 'Abort'
 
@@ -488,8 +507,8 @@ class Gameplay(Save):
                 price = qty*600000
                 if price > self.money: print('Not enough money!'); return 'Error'
                 else:
-                    print(f'Do you really want to purchase {qty} building.s for {price}Cr? This action is irreversible.')
-                    confirm = input('(y/n): ')
+                    print(f'You are about to purchase {qty} building.s for {price}Cr? This action is irreversible.')
+                    confirm = confirm()
                     if confirm == 'y': print(f'Purchased {qty} building.s !'); self.money-=price; self.build_num+=qty;self.storage.append(0)
                     else: print('Purchase aborted!'); return 'Abort'
 
@@ -499,7 +518,7 @@ def com(command:str):
     if comm == command: return
     else:
         print(f'You entered the wrong command, try {command}')
-        com(command)
+        return com(command)
 
 def imp_tut():
     print(f'5 units are necessary to produce 1 product\n')
@@ -519,6 +538,11 @@ def exp_tut(prod):
     exp=int(input(f'\nHow many products do you want to export? You have {prod}\n'))
     if exp>prod: print(f'You only have {prod} products to export.'); return exp_tut(prod)
 
+'''# # - - - TOOLS - - - # #'''
+def confirm():
+    confirmation = input('Do you confirm this action? (y/n):\n')
+    return confirmation
+
 '''# # - - - - TYPE-AND-PLAY FUNCTIONS - - - - # #'''
 
 '''Tools'''
@@ -536,13 +560,9 @@ def load_game():
     This function lets the user load an existing game file
     """
     global a, blocked
-    if platform.system() == 'Linux':
-        files = os.listdir('./saves/')
-        files = [f for f in files if os.path.isdir('./saves/'+f)]
-    else:
-        files = os.listdir(r'.\\saves\\')
-        files = [f for f in files if os.path.isdir(r'.\\saves\\'+f)]
-    name = input(f'What is the name of your save? {files}: ')
+    
+    profiles = sqlselect("""SELECT name FROM profiles""")
+    name = input(f'What is the name of your save? {profiles}: ')
     a = Gameplay(name=name, load='yes')
     blocked = True
 
@@ -553,10 +573,15 @@ def save():
         print('Game Saved!')
     else: return 'Error'
 
+def del_save():
+    profiles = sqlselect("""SELECT name FROM profiles""")
+    name = input(f'What profile do you want to delete? {profiles}: ')
+    confirm = confirm()
+
 def leave():
     if blocked:
-        print('\nAttention, all your progress will be automatically saved. Continue?')
-        c = input('y/n: ')
+        print('\nAttention, all your progress will be automatically saved.')
+        c = confirm()
         if c == 'y': a.leave(f=True)
         else: print('Aborted');return
     else: return 'Error'

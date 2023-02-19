@@ -67,6 +67,10 @@ def sqlload(name:str):
 
     return res[0],res[1],res[2],res[3],res[4],res[5]
 
+def sql_delsave(name:str):
+    query = "DELETE FROM profiles WHERE name = "+name
+    updt(connection, cursor, query)
+
 def storage_create(name:str): # Execute after sqlnew
     prID = get_prID(name)
 

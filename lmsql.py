@@ -10,5 +10,5 @@ def updt(conn, curs, req):
         conn.commit()
         return 0
         
-    except sql.OperationalError:
-        return 89
+    except sql.Error:
+        return 84

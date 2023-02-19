@@ -44,13 +44,22 @@
 - Implemented first achievements
 - (M) Implemented Company summary (summary())
 
+--v0.0.5a-- !WARNING! Old saves become incompatible, contact me if you want to keep them @🌈AshOnDscrd🌈 (They/Them)#5641
+- Implemented better storage
+- Added ability to delete profiles
+- (!) Rebuilt the save system
+- (!) Rebuilt storage system
+- (!) Rebuilt level-up system, better to start a new save than recalculate
+- (!) Fixed production storage errors/misscalculations/system
+- Fixed math errors again
+- (M) Prepared for achievements and break downs (There's mystery code laying around)
+- (C) Improved readability
 
-=== T.B.I. (To Be Implemented) ===
+=== T.B.I. (To Be Implemented) Alpha Only ===
 
-- Figure out how to delete the production after export (for now it's common storage)
+- Figure out how to manage production storage (for now it's common storage) --> Implemeted in v0.0.5a
 - Setting your own prices
-- Longer, interactive tutorial --> Implemented in v0.0.4a
-- Add events (vehicle/prod break down, detours...) and achievements
+- Add events (vehicle/prod break down, detours...) and achievements -> postponed
 - Bank loans with interest, bankrupcy, game over (?)
 - Advanced regular costs (time management etc...)
 

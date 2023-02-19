@@ -8,16 +8,16 @@ This is a small python game made as a personal challenge. It is a management gam
 
 ### -- HOW IT WORKS --
 
-To start the game, if you are on windows use 'launcher_win.bat' and enjoy! If you run Linux, execute 'sudo apt install idle', then launch 'launcher_linux.sh'. If you haven't configured your USB to be able to run files, copy the game to your local disk and launch the script. Alternatively, you can run '00_SHELL.py' in any interpreter (You can use idle in terminal by executing 'idle -r ./00_SHELL.py' while in game directory)
-From there, you will be presented by the welcome sentence. Run 'new_game()' to create a game save, or run 'load_game()' to load an existing game.
-A small tutorial exists if you run 'a.__tutorial__()' to get you into the game.
+To start the game, if you are on windows use 'launcher_win.bat' and enjoy! If you run Linux, install IDLE (sudo apt install idle / sudo pacman -S idle / etc...), then launch 'launcher_linux.sh'. If you haven't configured your USB to be able to run files, copy the game to your local disk and launch the script. Alternatively, you can run '00_SHELL.py' in any interpreter (You can use idle in terminal by executing 'idle -r ./00_SHELL.py' while in game directory)
+From there, you will be presented by the welcome sentence. Run 'new_game()' to create a game save, or run 'load_game()' to load an existing game.\
+A small tutorial exists if you run 'tutorial()' to get you into the game.
 
 ### -- SAVING --
 
 Saving was implemented in version 0.0.1a-f1\
 To save a game, use save()\
     >>> save()\
-Note. Quitting a game (ref. tutorial) saves automatically.
+Note. Quitting a game saves automatically.
 
 Loading has also been implemented in version 0.0.1a-f1
 To load an existing saved game, use load_game() function and follow the instructions.
@@ -33,6 +33,15 @@ In this game, you have to play chronologically. First you import, then you produ
 
 
 ## Changelog
+
+### How to Read:
+
+- --vx.x.xy-- --> Version Number
+- z ... --> Additions/Implementations
+- (!) a ... --> Change affects gameplay/saves
+- b --> Fixes
+- (M) c ... --> Minor Change
+- (C) d ... --> Changes to the code structure
 
 ### --v.0.0.1a--
 - Created the game (duh)
@@ -78,7 +87,7 @@ In this game, you have to play chronologically. First you import, then you produ
 - Implemented first achievements
 - (M) Implemented Company summary (summary())
 
-### --v0.0.5a-- !WARNING! Old saves become incompatible, contact me if you want to keep them @🌈AshOnDscrd🌈 (They/Them)#5641
+### --v0.0.5a-- **!WARNING! Old saves become incompatible, contact me if you want to keep them @🌈AshOnDscrd🌈 (They/Them)#5641**
 - Implemented better storage
 - (!) Rebuilt the save system
 - (!) Rebuilt storage system
