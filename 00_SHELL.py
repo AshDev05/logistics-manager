@@ -4,7 +4,9 @@ THIS FILE WILL PROBABLY BE USED FOR THE GUI DEVELOPMENT
 
 ~AshDev05_
 '''
-__version__ = '0.0.5a'
+
+
+__version__ = '0.0.6a'
 __author__ = 'AshDev05_'
 
 ''' This loads 'testfile' under 'test' '''
@@ -302,6 +304,15 @@ class Gameplay(Save):
             if self.exp >= 1000+self.level**5: self.level+=1; print(f'\n# -- You\'ve just levelled up! -- #\n\n')
             # if self.ach[1][0] == '0' and self.level == 2: self.ach[1][0] = '1'; print(f'Achievement Unlocked! {self.ach[1][1]}')
 
+    def breakdown(self, element:str):
+        print(f"\n\n{element} had had a problem!\n You need to fix the issue in order to continue.")
+        print(f"\nThe fixing service has 3 plans:\n1. Efficient (short): 1000Cr\n2. Average (medium): \
+            500Cr\n3. Long: 200Cr")
+        print("These services will cost you time and money, but each unit of time spent repairing will\
+            also cost you 5Cr of late delivery penalty.")
+        choice = int(input("\nWhich plan would you like to choose? (1,2,3)\n"))
+        
+
     '''# # - - - - ACTIONS - - - - # #''' 
 
     def imp_mat(self,order=0,f=False):
@@ -357,10 +368,16 @@ class Gameplay(Save):
                     self.storage[building[i]-1]-=qty*5//len(building)
 
             '''Production waiting time'''
+            bd_threshold = 1/(self.level+0.5)
             count = 0
-            bd_prob = random.random()
             for time in range(qty):
                 for i in range(20): # Production has to be long for low levels
+                    
+                    # Breakdown
+                    bd_prob = random.random()
+                    if bd_prob < bd_threshold:
+                        self.breakdown("Production")
+
                     print('-', end='')
                     if self.level == 1:
                         t.sleep(1/self.level)
@@ -511,6 +528,9 @@ class Gameplay(Save):
                     confirm = confirm()
                     if confirm == 'y': print(f'Purchased {qty} building.s !'); self.money-=price; self.build_num+=qty;self.storage.append(0)
                     else: print('Purchase aborted!'); return 'Abort'
+
+
+# # # - - - MAIN - - - # # #
 
 '''TUTORIAL USAGE'''
 def com(command:str):

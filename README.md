@@ -98,7 +98,6 @@ In this game, you have to play chronologically. First you import, then you produ
 
 ## === T.B.I. (To Be Implemented) Alpha Only ===
 
-- Figure out how to delete the production after export (for now it's common storage) --> Implemeted in v0.0.5a
 - Setting your own prices
 - Add events (vehicle/prod break down, detours...) and achievements -> postponed
 - Bank loans with interest, bankrupcy, game over (?)
