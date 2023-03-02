@@ -35,7 +35,7 @@ class Save:
         # Prevent users from opening a save without saving the other one
         if blocked:
             print('CANNOT LOAD GAME WHILE ANOTHER ONE IS OPEN!')
-            return 'Error'
+            return
         
         # Avoiding spaces in the names for consistency
         name_TEMP = ''
@@ -84,7 +84,7 @@ class Save:
 
             self.level, self.money, self.exp, self.build_num, self.van_num, self.truck_num = sqlload(self.name)
 
-            self.storage, self.prod_stor = storage.retrieve(self.name)
+            self.storage, self.prod_stor = storage_retrieve(self.name)
             
 
             '''# - - ACHIEVEMENTS - - #'''
@@ -145,7 +145,8 @@ class Gameplay(Save):
         global blocked
         super().__init__(name,load,path)
         if not blocked:
-            return '\n\n#----- WELCOME TO THE GAME -----#\n#------ LOGISTICS MANAGER ------#'
+            print('\n\n#----- WELCOME TO THE GAME -----#\n#------ LOGISTICS MANAGER ------#')
+        return
 
     def __tutorial__(self): # LIMITED TUTORIAL
         print('WELCOME TO THE TUTORIAL\n')
@@ -305,13 +306,36 @@ class Gameplay(Save):
             # if self.ach[1][0] == '0' and self.level == 2: self.ach[1][0] = '1'; print(f'Achievement Unlocked! {self.ach[1][1]}')
 
     def breakdown(self, element:str):
-        print(f"\n\n{element} had had a problem!\n You need to fix the issue in order to continue.")
+        print(f"\n\nYour {element} had had a problem!\n You need to fix the issue in order to continue.")
         print(f"\nThe fixing service has 3 plans:\n1. Efficient (short): 1000Cr\n2. Average (medium): \
-            500Cr\n3. Long: 200Cr")
+            625Cr\n3. Long: 200Cr")
         print("These services will cost you time and money, but each unit of time spent repairing will\
             also cost you 5Cr of late delivery penalty.")
         choice = int(input("\nWhich plan would you like to choose? (1,2,3)\n"))
-        
+        if choice == 1 and confirm() == "y": # -1025 total
+            self.money -= 1000
+            for i in range(5):
+                print("Fixing...")
+                self.money -= 5
+                t.sleep(1)
+        elif choice == 2 and confirm() == "y": # -675 total
+            self.money -= 625
+            for i in range(10):
+                print("Fixing...")
+                self.money -= 5
+                t.sleep(1)
+        elif choice == 3 and confirm() == "y": # -300 total
+            self.money -= 200
+            for i in range(20):
+                print("Fixing...")
+                self.money -= 5
+                t.sleep(1)
+        elif (confirm() != "y") or (choice not in [1,2,3]):
+            print("Try again")
+            a.breakdown(element)
+        else:
+            print("error")
+            return
 
     '''# # - - - - ACTIONS - - - - # #''' 
 
@@ -438,9 +462,18 @@ class Gameplay(Save):
                         else: num_prod-=num_prod;sv=0
                         if sv>0: sv-=1
                         print('\nVan is departing...')
-                    if 10/self.level >= 1: seconds = 10/self.level
-                    else: seconds = 1
+                    if 10/self.level >= 1:
+                        seconds = 10/self.level
+                    else:
+                        seconds = 1
+                    bd_threshold = 1/(self.level+0.5)
                     for sec in range(int(seconds)):
+                        
+                        # Breakdown
+                        bd_prob = random.random()
+                        if bd_prob < bd_threshold:
+                            self.breakdown("Production")
+                        
                         print('--', end='')
                         t.sleep(1)
                     if ori_num_prod>=5:
@@ -462,20 +495,38 @@ class Gameplay(Save):
                     print('\nLoading truck...')
                     t.sleep(5/self.level)
                     while st>0:
-                        if num_prod>=5: num_prod-=5
-                        else: num_prod-=num_prod;st=0
-                        if st>0: st-=1
+
+                        if num_prod >= 5:
+                            num_prod -= 5
+                        else: 
+                            num_prod -= num_prod
+                            st = 0
+                        if st > 0:
+                            st -= 1
+
                         print('\nTruck is departing...')
-                    if 15/self.level >= 1: seconds = 15/self.level
-                    else: seconds = 1
+
+                    if 15/self.level >= 1:
+                        seconds = 15/self.level
+                    else:
+                        seconds = 1
+                    
+                    bd_threshold = 1/(self.level+0.5)
                     for sec in range(int(seconds)):
+                        
+                        # Breakdown
+                        bd_prob = random.random()
+                        if bd_prob < bd_threshold:
+                            self.breakdown("Production")
+
                         print('--', end='')
                         t.sleep(1)
                     if ori_num_prod>=5:
                         while st<ori_st:
                             st+=1
                             print(f'\nTruck {st} has arrived.Unloading and returning.')
-                    else: print('\nTruck has arrived. Unloading and returning.')
+                    else:
+                        print('\nTruck has arrived. Unloading and returning.')
                     t.sleep(3/self.level)
                     if 7/self.level >= 1: seconds = 7/self.level
                     else: seconds = 1
@@ -613,7 +664,7 @@ def summary():
         print(f'\n\
         Money: {a.money}\n\
         Buildings: {a.build_num}\n\
-        Storage: {sum(a.storage)} Units | {a.prod_stor} Products\n\
+        Storage: {sum(a.storage)} Units | {sum(a.prod_stor)} Products\n\
         Van.s: {a.van_num}\n\
         Truck.s: {a.truck_num}\n\
         Experience: {a.exp}\n\
@@ -682,6 +733,3 @@ def tutorial(): # IF YOU WANNA KEEP YOUR SAVE. LOAD IT FIRST
     exp_tut(prod)
     print('Great Job! You have finished the tutorial, your ressources have not been touched. Good luck managing your company!')
     summary()
-
-
-    

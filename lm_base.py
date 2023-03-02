@@ -5,11 +5,11 @@ import platform as pltf
 
 """# - - General - - #"""
 
-def sum(list):
-    total= 0
-    for elt in range(len(list)):
-            total += list[elt]
-    return total
+# def sum(list):
+#     total= 0
+#     for elt in range(len(list)):
+#             total += list[elt]
+#     return total
 
 """# - - SQL - - #"""
 

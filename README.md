@@ -99,6 +99,6 @@ In this game, you have to play chronologically. First you import, then you produ
 ## === T.B.I. (To Be Implemented) Alpha Only ===
 
 - Setting your own prices
-- Add events (vehicle/prod break down, detours...) and achievements -> postponed
+- Add events (vehicle/prod break down, detours...) and achievements -> postponed (implemented breakdowns v0.0.6a)
 - Bank loans with interest, bankrupcy, game over (?)
 - Advanced regular costs (time management etc...)
