@@ -5,12 +5,6 @@ import platform as pltf
 
 """# - - General - - #"""
 
-# def sum(list):
-#     total= 0
-#     for elt in range(len(list)):
-#             total += list[elt]
-#     return total
-
 """# - - SQL - - #"""
 
 # Connecting to the DB is different on both supported platforms (cannot use same 'location format')

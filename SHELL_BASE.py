@@ -544,7 +544,6 @@ class Gameplay(Save):
             self.money += (100+10*self.level)*ori_num_prod
             self.exp_up(ori_num_prod, 'exp', f=True)
 
-
     '''# # - - - - GAME ELEMENTS - - - - # #'''
 
     def store(self, typ, qty,f=False): # DO NOT USE, USED BY THE OTHER PARTS OF CODE
