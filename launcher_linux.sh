@@ -1,2 +1,2 @@
 #!/bin/bash
-idle -r ./00_SHELL.py
+idle -r ./SHELL_BASE.py

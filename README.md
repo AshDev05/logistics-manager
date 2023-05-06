@@ -102,4 +102,4 @@ In this game, you have to play chronologically. First you import, then you produ
 - Add events (vehicle/prod break down, detours...) and achievements -> postponed (implemented breakdowns v0.0.6a)
 - Bank loans with interest, bankrupcy, game over (?)
 - Advanced regular costs (time management etc...)
-- GRAPHICAL INTERFACE
+- GRAPHICAL INTERFACE --> IMPLEMENTATION IN PROGRESS ..0.0.6a

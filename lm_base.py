@@ -30,7 +30,7 @@ def sqlsave(name:str, level:int, money:int, xp:int, build_num:int, van_num:int, 
     updt(connection, cursor,"""UPDATE profiles SET
                         level =""" + str(level) + """,
                         money =""" + str(money) + """,
-                        exp =""" + str(exp) + """,
+                        exp =""" + str(xp) + """,
                         build_num =""" + str(build_num) + """,
                         van_num =""" + str(van_num) + """,
                         truck_num =""" + str(truck_num) + """

@@ -18,8 +18,9 @@ from lm_base import *
 
 blocked = False
 
-print('# ---- LOGISTICS MANAGER | STARTING ---- #')
-print('To start, use new_game() to create a new game or load_game() to load a previous save')
+if __name__ == '__main__':
+    print('# ---- LOGISTICS MANAGER | STARTING ---- #')
+    print('To start, use new_game() to create a new game or load_game() to load a previous save')
 
 # if platform.system() == 'Linux':
 #     print('WARNING! You are using Linux, if you see \'attrib not found\' errors, please do not panic, those are normal.')
@@ -144,7 +145,7 @@ class Gameplay(Save):
     def __init__(self, name:str='New Save', load:str = 'no', path:str=r".\\saves\\"):
         global blocked
         super().__init__(name,load,path)
-        if not blocked:
+        if not blocked and __name__ == '__main__':
             print('\n\n#----- WELCOME TO THE GAME -----#\n#------ LOGISTICS MANAGER ------#')
         return
 
@@ -182,18 +183,18 @@ class Gameplay(Save):
             building = int(input(f'You have {self.build_num} buildings. Which one do you want to choose? (enter the number):\n'))
             if (building == 0) or (building > self.build_num): print('Invalid!');self.choose_building_stor(qty,True)
             
-            if self.storage[building-1] < int(50*(self.level*0.75)):
-                if self.storage[building-1]+qty <= int(50*(self.level*0.75)):
-                    print(f'Successfully stored {qty} units in building {building}!\nCapacity: {self.storage[building-1]+qty}/{int(50*(self.level*0.75))}.')
-                    self.storage[building-1]+=qty
+            if self.storage[building] < int(50*(self.level*0.75)):
+                if self.storage[building]+qty <= int(50*(self.level*0.75)):
+                    print(f'Successfully stored {qty} units in building {building}!\nCapacity: {self.storage[building]+qty}/{int(50*(self.level*0.75))}.')
+                    self.storage[building]+=qty
                 
-                elif self.storage[building-1]+qty > int(50*(self.level*0.75)) and self.build_num > 1:
+                elif self.storage[building]+qty > int(50*(self.level*0.75)) and self.build_num > 1:
                     print(f'Not enough space, filled building {building}, choose another one to complete.')
-                    lft_qty = qty-(int(50*(self.level*0.75))-self.storage[building-1])
-                    self.storage[building-1] = int(50*(self.level*0.75))
+                    lft_qty = qty-(int(50*(self.level*0.75))-self.storage[building])
+                    self.storage[building] = int(50*(self.level*0.75))
                     self.choose_building_stor(lft_qty,True,True)
                 
-                elif self.storage[building-1]+qty > int(50*(self.level*0.75)) and self.build_num == 1:
+                elif self.storage[building]+qty > int(50*(self.level*0.75)) and self.build_num == 1:
                     print(f'There is not enough space in your building, produce some goods to sell in order to retrieve storage!\n')
                     return 'Error'
                 
@@ -203,7 +204,7 @@ class Gameplay(Save):
                 print(f'There is not enough space in your buildings, produce some goods to sell in order to retrieve storage!\n')
                 return 'Error'
             
-            elif self.storage[building-1] == int(50*(self.level*0.75)):
+            elif self.storage[building] == int(50*(self.level*0.75)):
                 print('Not enough room in this building!'); self.choose_building_stor(qty,True)
 
     def choose_building_prod(self,qty, comp=False, building=[],f=False):
@@ -211,7 +212,7 @@ class Gameplay(Save):
             if sum(self.storage)<qty: print('Not enough units available, please import more.');return 'Error'
             else:
                 building.append(input(f'Choose a building to use units from. {self.build_num}: '))
-                if self.storage[building-1]>=qty:
+                if self.storage[building]>=qty:
                     building = building[0]
                     confirm = input(f'Do you want to take {qty} units from building {building}? (y/n): ')
                     if confirm == 'n': print('Cancelled production.');return 'Error'
@@ -308,9 +309,9 @@ class Gameplay(Save):
     def breakdown(self, element:str):
         print(f"\n\nYour {element} had had a problem!\n You need to fix the issue in order to continue.")
         print(f"\nThe fixing service has 3 plans:\n1. Efficient (short): 1000Cr\n2. Average (medium): \
-            625Cr\n3. Long: 200Cr")
+        625Cr\n3. Long: 200Cr")
         print("These services will cost you time and money, but each unit of time spent repairing will\
-            also cost you 5Cr of late delivery penalty.")
+        also cost you 5Cr of late delivery penalty.")
         choice = int(input("\nWhich plan would you like to choose? (1,2,3)\n"))
         if choice == 1 and confirm() == "y": # -1025 total
             self.money -= 1000
@@ -373,34 +374,38 @@ class Gameplay(Save):
     
     def prod(self, qty,f=False):
         if f or self.dev_l == 0:
+            
+            broke_down = False
+
             print(f'5 units are necessary to produce 1 product')
 
             ''' Chosing Building'''
             if self.build_num>1: building = self.choose_building_prod(qty=qty*5,f=True)
-            elif self.build_num == 1 and self.storage[0]>=qty*5:
+            elif self.build_num == 1 and self.storage[1]>=qty*5:
                 building = 1
-                confirm = input(f'Do you want to take {qty*5} units from building 1? Storage will be down to {self.storage[0]-5*qty}/{int(50*(self.level*0.75))}\nEnter y or n: ')
+                confirm = input(f'Do you want to take {qty*5} units from building 1? Storage will be down to {self.storage[1]-5*qty}/{int(50*(self.level*0.75))}\nEnter y or n: ')
                 if confirm == 'n': print('Cancelled production.');return
-            elif self.build_num == 1 and self.storage[0]<qty*5: print('Not enough units available, please import more.');return 'Error'
+            elif self.build_num == 1 and self.storage[1]<qty*5: print('Not enough units available, please import more.');return 'Error'
             elif building == 'Error': print('\nError, please try again\n')
             else: print('Error, please try again or contact dev(haven\'t looked into this yet)');return 'Error'
             
             print(f'Withdrew {qty*5} units from building.s {building}. Will store product.s in the same building.s') #product storage is infinite unless someone has an idea
-            if isinstance(building, int): self.storage[building-1]-=qty*5
+            if isinstance(building, int): self.storage[building]-=qty*5
             elif isinstance(building,list):
                 for i in range(len(building)):
                     self.storage[building[i]-1]-=qty*5//len(building)
 
             '''Production waiting time'''
-            bd_threshold = 1/(self.level+0.5)
+            bd_threshold = 1/(self.level+1)
             count = 0
             for time in range(qty):
                 for i in range(20): # Production has to be long for low levels
                     
                     # Breakdown
                     bd_prob = random.random()
-                    if bd_prob < bd_threshold:
+                    if bd_prob < bd_threshold and not broke_down:
                         self.breakdown("Production")
+                        broke_down = True
 
                     print('-', end='')
                     if self.level == 1:
@@ -441,7 +446,7 @@ class Gameplay(Save):
             ori_num_prod = num_prod # Remember the production amount
 
             # First you have to see if you have enough products
-            if self.prod_stor >= num_prod: pass
+            if sum(self.prod_stor.values()) >= num_prod: pass
             else: print('Not enough production stored!');return
 
             # Then you have to know how many vehicles to send
@@ -613,15 +618,14 @@ def confirm():
     confirmation = input('Do you confirm this action? (y/n):\n')
     return confirmation
 
-'''# # - - - - TYPE-AND-PLAY FUNCTIONS - - - - # #'''
+'''# # - - - - U.I. USE FUNCTIONS - - - - # #'''
 
 '''Tools'''
-def new_game():
+def new_game(name):
     """
     This function lets the user create a new game
     """
     global a, blocked
-    name = input('Give your save a name: ')
     a = Gameplay(name=name)
     blocked = True
 
@@ -646,7 +650,16 @@ def save():
 def del_save():
     profiles = sqlselect("""SELECT name FROM profiles""")
     name = input(f'What profile do you want to delete? {profiles}: ')
+
+    if name not in profiles:
+        return del_save()
+    
     confirm = confirm()
+
+    if confirm == 'y':
+        return sql_delsave(name)
+    
+    print("Action cancelled")
 
 def leave():
     if blocked:
@@ -663,7 +676,7 @@ def summary():
         print(f'\n\
         Money: {a.money}\n\
         Buildings: {a.build_num}\n\
-        Storage: {sum(a.storage)} Units | {sum(a.prod_stor)} Products\n\
+        Storage: {sum(a.storage.values())} Units | {sum(a.prod_stor.values())} Products\n\
         Van.s: {a.van_num}\n\
         Truck.s: {a.truck_num}\n\
         Experience: {a.exp}\n\
